@@ -1,122 +1,110 @@
 
-# Wall Crack Detection - CycleGAN 🌀✨
+# Wall Crack Detection - CycleGAN 🏗️🌀
 
-A PyTorch-based CycleGAN model that transforms blurred images into clear images using unpaired image-to-image translation. Trained using the official [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) framework.
+[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)](https://pytorch.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+A PyTorch implementation for enhancing wall crack detection images using CycleGAN, based on the [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) framework.
 
-## 📁 Dataset Structure
-
-The dataset follows the unaligned CycleGAN format:
+## Project Structure 📂
 
 ```
+pytorch-CycleGAN-and-pix2pix/
+├── WALL_CRACK/
+│   ├── blur_ds/
+│   │   ├── trainA/       # Blurred wall images
+│   │   └── trainB/       # Clear wall images
+│   ├── MiniBlur/         # Subset for quick testing
+│   │   ├── trainA/
+│   │   └── trainB/
+│   └── shadow_ds/        # Shadow augmentation dataset
+│       ├── trainA/
+│       └── trainB/
+├── scripts/
+│   ├── blur_add.py       # Add blur to images
+│   ├── ds_download.py    # Dataset download utility
+│   ├── shadow_add.py     # Add shadows to images
+│   └── subsetblur.py     # Create subset datasets
+├── cuda_test.py          # CUDA availability test
+└── README.md
+```
 
-datasets/
-└── blur2clear/
-├── trainA/      # Blurred images (Domain A)
-├── trainB/      # Clear images (Domain B)
-├── testA/       # Blurred test images
-└── testB/       # (Optional) Clear test images
+## Datasets 🌉
 
-````
+### Main Datasets:
+1. **blur_ds** - Primary dataset for blur-to-clear transformation
+   - `trainA/`: Clear wall crack images
+   - `trainB/`: Corresponding Blured clear images
 
-💡 Only the first 500 images were used for initial training to accelerate experimentation.
+2. **shadow_ds** - For shadow augmentation training
+   - `trainA/`: Clean images
+   - `trainB/`: Shadowed versions
 
----
+3. **MiniBlur** - Subset for rapid prototyping
+   - Contains 500 samples from blur_ds
 
-## 🚀 Training
+## Scripts 🛠️
 
-To train the CycleGAN model:
+### Data Preparation:
+- `blur_add.py`: Add synthetic blur to images
+- `shadow_add.py`: Add shadow effects to images
+- `subsetblur.py`: Create smaller dataset subsets
+- `ds_download.py`: Download dataset from external sources
+
+### Utility:
+- `cuda_test.py`: Verify CUDA availability and GPU compatibility
+
+## Quick Start 🚀
+
+1. **Prepare Datasets**:
+```bash
+python scripts/subsetblur.py --source blur_ds --target MiniBlur --size 500
+```
+
+2. **Add Augmentations**:
+```bash
+python scripts/blur_add.py --input_dir datasets/clear --output_dir blur_ds/trainA
+python scripts/shadow_add.py --input_dir datasets/clear --output_dir shadow_ds/trainA
+```
+
+3. **Verify Environment**:
+```bash
+python cuda_test.py
+```
+
+4. **Train Model**:
+```bash
+python train.py --dataroot ./WALL_CRACK/blur_ds --name wallcrack_cyclegan --model cycle_gan
+```
+
+## Training Options ⚙️
 
 ```bash
 python train.py \
-  --dataroot "A:/MACHINE LEARNING/datasets/blur2clear" \
-  --name blur2clear_cyclegan \
+  --dataroot ./WALL_CRACK/blur_ds \
+  --name wallcrack_model \
   --model cycle_gan \
-  --n_epochs 10 \
-  --n_epochs_decay 5 \
-  --gpu_ids 0 \
-  --load_size 128 \
-  --crop_size 128
-````
+  --batch_size 4 \
+  --n_epochs 50 \
+  --n_epochs_decay 50 \
+  --save_epoch_freq 10 \
+  --display_freq 100
+```
 
-* `n_epochs`: Number of epochs with initial learning rate.
-* `n_epochs_decay`: Linear decay after `n_epochs`.
+## Results Visualization 🌟
 
-> ✅ Training checkpoints and logs are saved to `checkpoints/blur2clear_cyclegan/`.
-
----
-
-## 🧪 Testing
-
-To test on new images:
-
+View training progress:
 ```bash
-python test.py \
-  --dataroot "A:/MACHINE LEARNING/datasets/blur2clear" \
-  --name blur2clear_cyclegan \
-  --model cycle_gan \
-  --gpu_ids 0 \
-  --load_size 128 \
-  --crop_size 128
+python -m visdom.server
 ```
+Then open `http://localhost:8097` in your browser.
 
-🔍 Results will be saved to:
+## License 📄
 
+MIT License - See [LICENSE](LICENSE) for details.
+
+---
+**Maintainer**: Sreehari ([@Sree14hari](https://github.com/Sree14hari))  
+**Contact**: sreehari14shr@gmail.com
+**Organization**: R3ACTR
 ```
-results/blur2clear_cyclegan/test_latest/images/
-```
-
----
-
-## 🖼️ Visual Results
-
-After training, visual output is viewable at:
-
-```
-checkpoints/blur2clear_cyclegan/web/index.html
-```
-
-It includes side-by-side comparisons of:
-
-* Real A (blurred input)
-* Fake B (generated clear)
-* Real B (ground truth clear, if available)
-* Reconstructed A (cycle consistency)
-
----
-
-## 🧠 Model Architecture
-
-CycleGAN uses two generators and two discriminators:
-
-* G<sub>A→B</sub>: Blurred → Clear
-* G<sub>B→A</sub>: Clear → Blurred
-* D<sub>A</sub>, D<sub>B</sub>: PatchGAN discriminators
-
----
-
-## 💻 System Info
-
-* 💻 Trained on: Local machine (Windows)
-* 🧠 Framework: PyTorch
-* 🎞️ Dataset: 20k blurred and clear images (subset of 500 used initially)
-* 🐍 Python: 3.10
-
----
-
-## 📌 Future Work
-
-* Train on full 20k dataset
-* Improve deblurring quality with deeper GANs or attention
-* Export trained model for inference in apps (ONNX/TorchScript)
-* Integrate with UI (Flutter or Tkinter)
-
----
-
-## 🧑‍💻 Author
-
-**Sreehari** — [R3CTR](https://github.com/Sree14hari)
-Passionate about AI, ML, and building impactful tools.
-
----
