@@ -1,5 +1,5 @@
 
-# Blur2Clear CycleGAN 🌀✨
+# Wall Crack Detection - CycleGAN 🌀✨
 
 A PyTorch-based CycleGAN model that transforms blurred images into clear images using unpaired image-to-image translation. Trained using the official [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) framework.
 
