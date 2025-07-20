@@ -107,4 +107,17 @@ MIT License - See [LICENSE](LICENSE) for details.
 **Maintainer**: Sreehari ([@Sree14hari](https://github.com/Sree14hari))  
 **Contact**: sreehari14shr@gmail.com
 **Organization**: R3ACTR
-```
+
+## Dataset Download 📥
+
+Pre-processed datasets (blurred and shadowed images) are available on Google Drive:
+
+[🔗 Download Dataset](https://drive.google.com/drive/folders/1HHd_dyQ5xOUNn6GQ447jUVGuY8AMA0_O?usp=drive_link)
+
+The dataset contains:
+- 20k wall crack images
+- Blurred and clear image pairs
+- Shadow-augmented versions
+- Pre-split train/test sets
+
+After downloading, place the folders in the `WALL_CRACK/` directory to match the expected structure.
